@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout de Pagamento | Mercado Pago</title>
+  <link rel="icon" type="image/jpeg" href="/assets/images/logo.jpg">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .mp-container {
+      max-width: 480px;
+      margin: 3rem auto;
+      background: #ffffff;
+      color: #333333;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      overflow: hidden;
+    }
+    .mp-header {
+      background: #009ee3; /* Mercado Pago Blue */
+      color: #fff;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    .mp-body {
+      padding: 2rem;
+      text-align: center;
+    }
+    .qr-box {
+      border: 2px dashed #009ee3;
+      border-radius: 12px;
+      padding: 1rem;
+      margin: 1.5rem auto;
+      display: inline-block;
+      background: #f8fafc;
+    }
+    .pix-code-box {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      padding: 0.75rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      word-break: break-all;
+      margin: 1rem 0;
+      color: #475569;
+      text-align: left;
+    }
+    .btn-mp {
+      background: #009ee3;
+      color: #fff;
+      padding: 0.85rem;
+      border-radius: 8px;
+      font-weight: 700;
+      width: 100%;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: background 0.2s;
+    }
+    .btn-mp:hover {
+      background: #0081b8;
+    }
+    .notice-mode {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1e40af;
+      padding: 0.6rem;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body style="background: #0c0d0e;">
+
+  <div class="mp-container">
+    <div class="mp-header">
+      <div style="font-size: 1.4rem; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+        <i class="fa-solid fa-handshake"></i> Mercado Pago
+      </div>
+      <div style="font-size: 0.85rem; opacity: 0.9; margin-top: 0.2rem;">Pagamento Seguro • RC Barbearia</div>
+    </div>
+
+    <div class="mp-body">
+      <div class="notice-mode">
+        <i class="fa-solid fa-circle-info"></i> <strong>Modo de Demonstração / Sandbox:</strong> Link de pagamento oficial configurável no painel administrativo.
+      </div>
+
+      <div style="font-size: 0.9rem; color: #64748b;">Serviço selecionado:</div>
+      <div id="mpService" style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin: 0.2rem 0 0.5rem;">Corte Disfarçado</div>
+      <div id="mpPrice" style="font-size: 2rem; font-weight: 900; color: #009ee3;">R$ 35,00</div>
+
+      <div class="qr-box">
+        <!-- QR Code Demonstrativo -->
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=00020126580014br.gov.bcb.pix0136rcbarbearia-chave-demonstracao-mercadopago5204000053039865802BR5920RC%20BARBEARIA6009SAO%20PAULO62070503***6304E2CA" alt="QR Code PIX" style="display: block; border-radius: 8px;">
+        <div style="font-size: 0.75rem; color: #64748b; margin-top: 0.5rem; font-weight: 600;">
+          <i class="fa-brands fa-pix"></i> Abra o app do seu banco e escaneie
+        </div>
+      </div>
+
+      <div style="text-align: left; font-size: 0.82rem; font-weight: 600; color: #334155;">Código PIX Copia e Cola:</div>
+      <div class="pix-code-box" id="pixCodeText">
+        00020126580014br.gov.bcb.pix0136rcbarbearia-mercadopago-pix-gerado-online-sem-fila5204000053039865802BR5920RC BARBEARIA6009SAO PAULO62070503***6304
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="copyPixCode()" style="width: 100%; margin-bottom: 1.25rem; background: #e2e8f0; color: #1e293b;">
+        <i class="fa-regular fa-copy"></i> Copiar Código PIX
+      </button>
+
+      <button class="btn-mp" id="btnSimulateApproval" onclick="simulatePaymentSuccess()">
+        <i class="fa-solid fa-check"></i> Simular Confirmação de Pagamento
+      </button>
+      <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.75rem;">
+        Ao conectar seu <em>Access Token</em> do Mercado Pago no painel, a cobrança cai diretamente na sua conta bancária.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const service = params.get('service') || 'Atendimento RC Barbearia';
+    const amount = params.get('amount') || '35.00';
+    const client = params.get('client') || 'Cliente';
+
+    document.getElementById('mpService').textContent = service;
+    document.getElementById('mpPrice').textContent = Number(amount).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+    function copyPixCode() {
+      const code = document.getElementById('pixCodeText').innerText.trim();
+      navigator.clipboard.writeText(code);
+      alert('Código PIX copiado com sucesso! Abra o app do seu banco para pagar.');
+    }
+
+    async function simulatePaymentSuccess() {
+      const btn = document.getElementById('btnSimulateApproval');
+      btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Aprovando no Mercado Pago...`;
+      btn.disabled = true;
+
+      // Buscar último agendamento para simular baixa
+      try {
+        const res = await fetch('/api/appointments');
+        const list = await res.json();
+        if (list && list.length > 0) {
+          const lastId = list[0].id;
+          await fetch(`/api/appointments/${lastId}/confirm-simulation`, { method: 'POST' });
+        }
+      } catch (e) {
+        console.warn(e);
+      }
+
+      setTimeout(() => {
+        window.location.href = `/agendamento-confirmado.html?status=success&service=${encodeURIComponent(service)}&price=${amount}&method=online_mercadopago`;
+      }, 1000);
+    }
+  </script>
+</body>
+</html>

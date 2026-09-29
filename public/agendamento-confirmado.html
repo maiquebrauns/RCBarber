@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Agendamento Confirmado | RC Barbearia</title>
+  <link rel="icon" type="image/jpeg" href="/assets/images/logo.jpg">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .confirm-box {
+      max-width: 520px;
+      margin: 4rem auto;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    }
+    .check-icon {
+      width: 76px;
+      height: 76px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 2px solid var(--success);
+      color: var(--success);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      margin: 0 auto 1.5rem;
+    }
+    .ticket-details {
+      background: var(--bg-input);
+      border: 1px dashed var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 1.25rem;
+      text-align: left;
+      margin: 1.5rem 0;
+      font-size: 0.95rem;
+    }
+    .ticket-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.6rem;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      padding-bottom: 0.4rem;
+    }
+    .ticket-row:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    .ticket-label {
+      color: var(--text-muted);
+    }
+    .ticket-val {
+      font-weight: 700;
+      color: var(--text-main);
+    }
+  </style>
+</head>
+<body>
+
+  <header class="navbar">
+    <a href="/" class="nav-brand">
+      <img src="/assets/images/logo.jpg" alt="Logo" class="nav-logo-img">
+      <div class="brand-title">RC <span>BARBEARIA</span></div>
+    </a>
+  </header>
+
+  <div class="confirm-box">
+    <div class="check-icon">
+      <i class="fa-solid fa-check"></i>
+    </div>
+    <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 0.5rem;">Agendamento Reservado!</h2>
+    <p style="color: var(--text-muted); font-size: 0.95rem;">
+      Seu horário na <strong style="color: var(--primary-gold);">RC Barbearia</strong> foi registrado com sucesso.
+    </p>
+
+    <div class="ticket-details" id="ticketDetails">
+      <div class="ticket-row">
+        <span class="ticket-label">Barbeiro:</span>
+        <span class="ticket-val" id="resBarber">-</span>
+      </div>
+      <div class="ticket-row">
+        <span class="ticket-label">Serviço:</span>
+        <span class="ticket-val" id="resService">-</span>
+      </div>
+      <div class="ticket-row">
+        <span class="ticket-label">Data:</span>
+        <span class="ticket-val" id="resDate">-</span>
+      </div>
+      <div class="ticket-row">
+        <span class="ticket-label">Horário:</span>
+        <span class="ticket-val" id="resTime">-</span>
+      </div>
+      <div class="ticket-row">
+        <span class="ticket-label">Valor:</span>
+        <span class="ticket-val" id="resPrice" style="color: var(--primary-gold); font-size: 1.1rem;">-</span>
+      </div>
+      <div class="ticket-row">
+        <span class="ticket-label">Pagamento:</span>
+        <span class="ticket-val" id="resPayment">-</span>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+      <a href="/" class="btn btn-gold" style="width: 100%;">
+        <i class="fa-solid fa-house"></i> Voltar ao Início
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // BLOQUEIO COMPLETO DE ZOOM
+    document.addEventListener('gesturestart', (e) => e.preventDefault());
+    document.addEventListener('gesturechange', (e) => e.preventDefault());
+    document.addEventListener('gestureend', (e) => e.preventDefault());
+    document.addEventListener('touchmove', (e) => {
+      if (e.touches && e.touches.length > 1) e.preventDefault();
+    }, { passive: false });
+
+    const params = new URLSearchParams(window.location.search);
+    const barber = params.get('barber') || 'Renan Carvalho';
+    const service = params.get('service') || 'Corte';
+    const date = params.get('date') || '';
+    const time = params.get('time') || '';
+    const price = params.get('price') || '';
+    const method = params.get('method') || '';
+    const status = params.get('status') || '';
+
+    // Formatar data para DD/MM/AAAA
+    let dateFormatted = date;
+    if (date && date.includes('-')) {
+      const [y, m, d] = date.split('-');
+      dateFormatted = `${d}/${m}/${y}`;
+    }
+
+    document.getElementById('resBarber').textContent = barber;
+    document.getElementById('resService').textContent = service;
+    document.getElementById('resDate').textContent = dateFormatted;
+    document.getElementById('resTime').textContent = time ? `${time}h` : '';
+    document.getElementById('resPrice').textContent = price ? Number(price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '';
+    
+    let payText = 'Pagamento no Local';
+    if (status === 'success' || method === 'online_mercadopago') {
+      payText = 'Online (Mercado Pago) - Aprovado';
+    }
+    document.getElementById('resPayment').textContent = payText;
+  </script>
+</body>
+</html>

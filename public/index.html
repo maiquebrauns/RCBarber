@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>RC Barbearia | Renan Carvalho - Agendamento Online</title>
+  <link rel="icon" type="image/jpeg" href="/assets/images/logo.jpg">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <a href="/" class="nav-brand">
+      <img src="/assets/images/logo.jpg" alt="RC Barbearia Logo" class="nav-logo-img">
+      <div class="brand-title">RC <span>BARBEARIA</span></div>
+    </a>
+    <div class="nav-actions">
+      <button onclick="openMyAppointmentsModal()" class="btn btn-gold btn-sm" title="Consultar Meus Agendamentos">
+        Meus Agendamentos
+      </button>
+      <a href="/admin.html" class="btn btn-secondary btn-sm" title="Painel do Barbeiro">
+        Gestão
+      </a>
+    </div>
+  </header>
+
+  <!-- CATÁLOGO DE SERVIÇOS & PACOTES (ENTRADA DIRETA) -->
+  <section class="section" id="servicos" style="padding-top: 1.5rem;">
+    <div class="section-header">
+      <span class="section-tag">Catálogo Completo</span>
+      <h2 class="section-title">Serviços & Pacotes Mensais</h2>
+      <p class="section-desc">Clique na categoria para abrir os serviços disponíveis e escolher o seu horário.</p>
+    </div>
+
+    <!-- BUSCA RÁPIDA DE SERVIÇOS -->
+    <div style="max-width: 500px; margin: 0 auto 2rem; position: relative;">
+      <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-dim);"></i>
+      <input type="text" id="serviceSearchInput" class="form-control" placeholder="Buscar por corte, barba, pigmentação, pacote..." oninput="handleServiceSearch(this.value)" style="padding-left: 2.75rem; border-radius: 50px;">
+    </div>
+
+    <!-- CATEGORIAS EM ACORDEON (ESTILO SALONSOFT) -->
+    <div id="servicesAccordionContainer">
+      <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+        <i class="fa-solid fa-circle-notch fa-spin"></i> Carregando categorias e serviços...
+      </div>
+    </div>
+  </section>
+
+  <!-- HORÁRIOS E LOCALIZAÇÃO -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-tag">Informações</span>
+      <h2 class="section-title">Horários & Localização</h2>
+    </div>
+
+    <div class="info-grid">
+      <!-- HORÁRIOS -->
+      <div class="info-card">
+        <h3><i class="fa-regular fa-clock"></i> Horário de Atendimento</h3>
+        <table class="hours-table">
+          <tr id="day-seg"><td>Segunda-feira</td><td>Fechado</td></tr>
+          <tr id="day-ter"><td>Terça-feira</td><td>10:00 às 18:00</td></tr>
+          <tr id="day-qua"><td>Quarta-feira</td><td>13:00 às 18:00</td></tr>
+          <tr id="day-qui"><td>Quinta-feira</td><td>10:30 às 18:00</td></tr>
+          <tr id="day-sex"><td>Sexta-feira</td><td>10:00 às 20:00</td></tr>
+          <tr id="day-sab"><td>Sábado</td><td>10:00 às 18:00</td></tr>
+          <tr id="day-dom"><td>Domingo</td><td>Fechado</td></tr>
+        </table>
+      </div>
+
+      <!-- LOCALIZAÇÃO / CONTATO -->
+      <div class="info-card">
+        <h3><i class="fa-solid fa-map-location-dot"></i> Onde Estamos</h3>
+        <p style="color: var(--text-muted); margin-bottom: 1.25rem;">
+          Ambiente climatizado, com som ambiente, café e atendimento personalizado para você relaxar.
+        </p>
+        <div style="margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.85rem; font-size: 0.95rem;">
+          <!-- BOTÃO COM LINK PARA GOOGLE MAPS -->
+          <a href="https://maps.app.goo.gl/Jht21Ac4N7eDugiB7" target="_blank" rel="noopener noreferrer" class="btn btn-outline-gold" style="justify-content: flex-start; padding: 0.75rem 1rem; width: 100%; text-decoration: none;">
+            <i class="fa-solid fa-location-dot" style="color: var(--primary-gold); font-size: 1.15rem; width: 24px;"></i>
+            <span style="font-weight: 800; letter-spacing: 0.5px;">RC BARBEARIA</span>
+            <i class="fa-solid fa-arrow-up-right-from-square" style="margin-left: auto; font-size: 0.85rem; opacity: 0.8;"></i>
+          </a>
+          <div><i class="fa-brands fa-whatsapp" style="color: #25d366; width: 22px;"></i> WhatsApp: <strong style="color: #fff;">(21) 99108-1977</strong></div>
+          <div><i class="fa-solid fa-credit-card" style="color: var(--primary-gold); width: 22px;"></i> Aceitamos PIX, Cartão e Mercado Pago</div>
+        </div>
+        <button onclick="openBookingModal()" class="btn btn-gold" style="width: 100%;">
+          <i class="fa-solid fa-calendar-check"></i> Reservar Meu Horário
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>&copy; <span id="currentYear"></span> RC BARBEARIA • Renan Carvalho. Todos os direitos reservados.</p>
+    <p style="margin-top: 0.4rem; font-size: 0.8rem; color: var(--text-dim);">
+      Plataforma de Agendamentos & Pagamentos Online integrada com Mercado Pago.
+    </p>
+  </footer>
+
+  <!-- MODAL DE AGENDAMENTO INTERATIVO -->
+  <div class="modal-overlay" id="bookingModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-scissors" style="color: var(--primary-gold);"></i> Novo Agendamento</h3>
+        <button class="modal-close" onclick="closeBookingModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="bookingForm" onsubmit="handleBookingSubmit(event)">
+          
+          <!-- 1. ESCOLHA DO BARBEIRO -->
+          <div class="form-group">
+            <label class="form-label"><i class="fa-solid fa-user-tie"></i> Escolha o Barbeiro:</label>
+            <select class="form-control" id="selectBarber" required onchange="onBarberOrDateChange()">
+              <option value="">Carregando barbeiros...</option>
+            </select>
+          </div>
+
+          <!-- 2. SERVIÇO SELECIONADO OU SELETOR -->
+          <div class="form-group" id="groupSelectedServiceSummary" style="display: none;">
+            <label class="form-label"><i class="fa-solid fa-scissors"></i> Serviço Selecionado:</label>
+            <div class="selected-service-summary">
+              <div class="selected-service-info">
+                <div class="selected-service-icon"><i class="fa-solid fa-check"></i></div>
+                <div>
+                  <div class="selected-service-name" id="summaryServiceName">-</div>
+                  <div class="selected-service-meta" id="summaryServiceMeta">-</div>
+                </div>
+              </div>
+              <button type="button" class="btn-change-service" onclick="enableServiceDropdown()">
+                <i class="fa-solid fa-pen-to-square"></i> Trocar
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group" id="groupServiceSelect">
+            <label class="form-label"><i class="fa-solid fa-tag"></i> Serviço ou Pacote:</label>
+            <select class="form-control" id="selectService" required onchange="updateServicePrice()">
+              <option value="">Carregando serviços...</option>
+            </select>
+            <div id="servicePriceNotice" style="margin-top: 0.4rem; font-size: 0.9rem; color: var(--primary-gold); font-weight: 700;"></div>
+          </div>
+
+          <!-- 3. ESCOLHA DO DIA INTERATIVA (CALENDÁRIO HORIZONTAL) -->
+          <div class="form-group">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+              <label class="form-label" style="margin-bottom: 0;"><i class="fa-regular fa-calendar-days"></i> Escolha o Dia:</label>
+              <span id="selectedDateLabel" style="font-size: 0.85rem; color: var(--primary-gold); font-weight: 700;"></span>
+            </div>
+            <div class="date-strip-wrap" id="dateStripContainer">
+              <!-- Gerado dinamicamente com os próximos 14 dias -->
+            </div>
+            <input type="hidden" id="inputDate" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label"><i class="fa-regular fa-clock"></i> Horários Disponíveis:</label>
+            <div class="slots-grid" id="slotsContainer">
+              <div style="grid-column: 1/-1; text-align: center; color: var(--text-dim); padding: 0.5rem; font-size: 0.85rem;">
+                Selecione o barbeiro e o dia para ver os horários livres.
+              </div>
+            </div>
+            <input type="hidden" id="selectedTime" required>
+            <div id="selectedTimeNotice" style="margin-top: 0.35rem; font-size: 0.85rem; color: var(--success); font-weight: 600;"></div>
+          </div>
+
+          <!-- 4. DADOS DO CLIENTE -->
+          <div class="form-group">
+            <label class="form-label"><i class="fa-solid fa-user"></i> Seu Nome Completo:</label>
+            <input type="text" class="form-control" id="clientName" placeholder="Ex: Lucas Ferreira" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label"><i class="fa-brands fa-whatsapp"></i> Seu WhatsApp com DDD:</label>
+            <input type="tel" class="form-control" id="clientPhone" placeholder="Ex: (11) 99999-9999" required>
+          </div>
+
+          <!-- 5. OPÇÃO DE PAGAMENTO -->
+          <div class="form-group">
+            <label class="form-label"><i class="fa-solid fa-wallet"></i> Forma de Pagamento:</label>
+            <div class="payment-methods">
+              
+              <label class="payment-card-opt selected" onclick="selectPaymentOpt(this)">
+                <input type="radio" name="paymentMethod" value="online_mercadopago" checked>
+                <div>
+                  <div class="payment-opt-title"><i class="fa-brands fa-pix" style="color: #00b4d8;"></i> Pagar Online Agora</div>
+                  <div class="payment-opt-desc">Mercado Pago (PIX / Cartão) sem precisar pagar na hora</div>
+                </div>
+              </label>
+
+              <label class="payment-card-opt" onclick="selectPaymentOpt(this)">
+                <input type="radio" name="paymentMethod" value="local_presencial">
+                <div>
+                  <div class="payment-opt-title"><i class="fa-solid fa-store" style="color: var(--primary-gold);"></i> Pagar na Barbearia</div>
+                  <div class="payment-opt-desc">Dinheiro, PIX ou maquininha no momento do corte</div>
+                </div>
+              </label>
+
+            </div>
+          </div>
+
+          <button type="submit" id="btnConfirmBooking" class="btn btn-gold" style="width: 100%; padding: 0.85rem; font-size: 1.05rem;">
+            <i class="fa-solid fa-check-circle"></i> Confirmar Agendamento
+          </button>
+
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: MEUS AGENDAMENTOS (BUSCA POR TELEFONE / ID) -->
+  <div class="modal-overlay" id="myAppointmentsModal">
+    <div class="modal-content" style="max-width: 580px;">
+      <div class="modal-header">
+        <h3><i class="fa-regular fa-calendar-check" style="color: var(--primary-gold);"></i> Meus Agendamentos</h3>
+        <button class="modal-close" onclick="closeMyAppointmentsModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1.25rem;">
+          Digite seu número de telefone/WhatsApp com DDD para ver seus horários marcados e histórico na RC Barbearia:
+        </p>
+        
+        <form onsubmit="handleSearchAppointments(event)" style="margin-bottom: 1.5rem;">
+          <div style="display: flex; gap: 0.5rem;">
+            <input type="tel" id="myPhoneInput" class="form-control" placeholder="Ex: (21) 99108-1977" required style="font-size: 1.05rem;">
+            <button type="submit" class="btn btn-gold" id="btnSearchAppointments" style="white-space: nowrap;">
+              <i class="fa-solid fa-magnifying-glass"></i> Buscar
+            </button>
+          </div>
+        </form>
+
+        <div id="myAppointmentsResults">
+          <div style="text-align: center; color: var(--text-dim); padding: 2rem 1rem;">
+            <i class="fa-solid fa-mobile-screen-button" style="font-size: 2.5rem; margin-bottom: 0.75rem; opacity: 0.5;"></i>
+            <p>Seus agendamentos aparecerão aqui após a busca.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>

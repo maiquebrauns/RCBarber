@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Dashboard de Gestão & Financeiro | RC Barbearia</title>
+  <link rel="icon" type="image/jpeg" href="/assets/images/logo.jpg">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <!-- Chart.js para gráficos visuais -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .login-modal {
+      position: fixed;
+      inset: 0;
+      background: #0c0d0e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      padding: 1.5rem;
+    }
+    .login-box {
+      max-width: 380px;
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    }
+    .pin-input {
+      letter-spacing: 8px;
+      font-size: 1.6rem;
+      text-align: center;
+      font-weight: 800;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .quick-action-btn {
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      border: 1px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .btn-action-done {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+      border-color: rgba(16, 185, 129, 0.4);
+    }
+    .btn-action-done:hover {
+      background: var(--success);
+      color: #0c0d0e;
+    }
+    .btn-action-pix {
+      background: rgba(0, 180, 216, 0.15);
+      color: #00b4d8;
+      border-color: rgba(0, 180, 216, 0.4);
+    }
+    .btn-action-pix:hover {
+      background: #00b4d8;
+      color: #0c0d0e;
+    }
+    .btn-action-card {
+      background: rgba(139, 92, 246, 0.15);
+      color: #a78bfa;
+      border-color: rgba(139, 92, 246, 0.4);
+    }
+    .btn-action-card:hover {
+      background: #8b5cf6;
+      color: #fff;
+    }
+    .btn-action-money {
+      background: rgba(229, 169, 59, 0.15);
+      color: var(--primary-gold);
+      border-color: rgba(229, 169, 59, 0.4);
+    }
+    .btn-action-money:hover {
+      background: var(--primary-gold);
+      color: #0c0d0e;
+    }
+    .btn-action-cancel {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+    .btn-action-cancel:hover {
+      background: var(--danger);
+      color: #fff;
+    }
+    .date-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--bg-input);
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body style="background: #0a0b0c;">
+
+  <!-- TELA DE LOGIN POR PIN (SEGURANÇA DO BARBEIRO) -->
+  <div class="login-modal" id="loginModal">
+    <div class="login-box">
+      <img src="/assets/images/logo.jpg" alt="Logo" style="width: 70px; height: 70px; border-radius: 50%; border: 2px solid var(--primary-gold); margin-bottom: 1rem;">
+      <h2 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 0.3rem;">Painel do Barbeiro</h2>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">
+        Digite seu PIN de 4 dígitos para acessar as métricas financeiras.
+      </p>
+      <form onsubmit="handlePinLogin(event)">
+        <div class="form-group">
+          <input type="password" id="inputPin" class="form-control pin-input" maxlength="4" placeholder="••••" required autofocus>
+        </div>
+        <button type="submit" class="btn btn-gold" style="width: 100%; padding: 0.8rem;">
+          <i class="fa-solid fa-arrow-right-to-bracket"></i> Acessar Painel
+        </button>
+      </form>
+      <div style="margin-top: 1rem; font-size: 0.75rem; color: var(--text-dim);">
+        PIN padrão inicial: <strong>1234</strong> (alterável nas configurações)
+      </div>
+      <div style="margin-top: 1rem;">
+        <a href="/" style="color: var(--primary-gold); font-size: 0.85rem; text-decoration: none;">
+          <i class="fa-solid fa-arrow-left"></i> Voltar ao site público
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEADER DO ADMIN -->
+  <header class="admin-header">
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <img src="/assets/images/logo.jpg" alt="Logo" style="width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--primary-gold);">
+      <div>
+        <div style="font-size: 1.15rem; font-weight: 800; letter-spacing: 0.5px;">RC <span>BARBEARIA</span> • PAINEL</div>
+        <div style="font-size: 0.78rem; color: var(--text-dim);">Gestão Operacional, Equipe e Financeiro</div>
+      </div>
+    </div>
+
+    <!-- SELETOR DE DATA / FILTRO -->
+    <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+      <div class="date-badge">
+        <i class="fa-regular fa-calendar" style="color: var(--primary-gold);"></i>
+        <span>Data:</span>
+        <input type="date" id="adminDateFilter" onchange="refreshDashboard()" style="background: transparent; border: none; color: #fff; font-weight: 600; outline: none; cursor: pointer;">
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="refreshDashboard()" title="Recarregar Dados">
+        <i class="fa-solid fa-rotate"></i> Atualizar
+      </button>
+      <a href="/" target="_blank" class="btn btn-outline-gold btn-sm">
+        <i class="fa-solid fa-arrow-up-right-from-square"></i> Ver Site
+      </a>
+      <button class="btn btn-secondary btn-sm" onclick="logoutAdmin()" title="Sair">
+        <i class="fa-solid fa-right-from-bracket"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- SUB-BARRA DE NAVEGAÇÃO ENTRE ABAS -->
+  <div style="background: var(--bg-card); border-bottom: 1px solid var(--border-color); padding: 0.5rem 1.5rem;">
+    <div class="admin-nav">
+      <button class="admin-nav-btn active" onclick="switchTab('tab-dashboard', this)">
+        <i class="fa-solid fa-chart-pie"></i> Visão Geral & Atendimentos
+      </button>
+      <button class="admin-nav-btn" onclick="switchTab('tab-barbers', this)">
+        <i class="fa-solid fa-users"></i> Barbeiros (Equipe)
+      </button>
+      <button class="admin-nav-btn" onclick="switchTab('tab-finance', this)">
+        <i class="fa-solid fa-cash-register"></i> Caixa (Entradas & Saídas)
+      </button>
+      <button class="admin-nav-btn" onclick="switchTab('tab-settings', this)">
+        <i class="fa-solid fa-sliders"></i> Mercado Pago & Ajustes
+      </button>
+    </div>
+  </div>
+
+  <div class="section" style="padding-top: 1.5rem;">
+
+    <!-- ======================================================== -->
+    <!-- ABA 1: DASHBOARD GERAL & ATENDIMENTOS DO DIA -->
+    <!-- ======================================================== -->
+    <div id="tab-dashboard" class="tab-content active">
+      
+      <!-- 1. MÉTRICAS DIÁRIAS (HOJE) -->
+      <div style="margin-bottom: 0.75rem; font-size: 0.95rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">
+        <i class="fa-solid fa-calendar-day" style="color: var(--primary-gold);"></i> Resumo Operacional do Dia Selecionado:
+      </div>
+
+      <div class="metrics-grid">
+        
+        <!-- CLIENTES ATENDIDOS NO DIA -->
+        <div class="metric-card">
+          <div class="metric-label">
+            <span>Pessoas Atendidas</span>
+            <i class="fa-solid fa-user-check" style="color: var(--info);"></i>
+          </div>
+          <div class="metric-value" id="cardDailyAttended">0</div>
+          <div class="metric-sub" id="cardDailyTotalAppts">Total de 0 agendados para hoje</div>
+        </div>
+
+        <!-- ENTRADAS DO DIA -->
+        <div class="metric-card">
+          <div class="metric-label">
+            <span>Entradas do Dia (Faturamento)</span>
+            <i class="fa-solid fa-arrow-trend-up" style="color: var(--success);"></i>
+          </div>
+          <div class="metric-value" id="cardDailyIncomes">R$ 0,00</div>
+          <div class="metric-sub">Online + Recebidos na Barbearia</div>
+        </div>
+
+        <!-- SAÍDAS / DESPESAS DO DIA -->
+        <div class="metric-card">
+          <div class="metric-label">
+            <span>Saídas do Dia (Despesas)</span>
+            <i class="fa-solid fa-arrow-trend-down" style="color: var(--danger);"></i>
+          </div>
+          <div class="metric-value" id="cardDailyExpenses" style="color: var(--danger);">R$ 0,00</div>
+          <div class="metric-sub">Lâminas, produtos, despesas diárias</div>
+        </div>
+
+        <!-- VALOR FINAL DO LUCRO DO DIA (DESTAQUE MÁXIMO) -->
+        <div class="metric-card highlight">
+          <div class="metric-label">
+            <span style="color: var(--primary-gold); font-weight: 800;">LUCRO LÍQUIDO DO DIA</span>
+            <i class="fa-solid fa-coins" style="color: var(--primary-gold);"></i>
+          </div>
+          <div class="metric-value profit" id="cardDailyNetProfit">R$ 0,00</div>
+          <div class="metric-sub" id="cardDailyProfitMargin" style="color: var(--success); font-weight: 700;">
+            Valor final no bolso do barbeiro hoje
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 2. MÉTRICAS MENSAIS (ENTRADAS, SAÍDAS E LUCRO MENSAL) -->
+      <div style="margin: 1.5rem 0 0.75rem; font-size: 0.95rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">
+        <i class="fa-solid fa-calendar-alt" style="color: var(--primary-gold);"></i> Consolidado Mensal do Mês Atual:
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-label">
+            <span>Total Atendimentos no Mês</span>
+            <i class="fa-solid fa-users" style="color: var(--info);"></i>
+          </div>
+          <div class="metric-value" id="cardMonthlyAttended">0</div>
+          <div class="metric-sub">Clientes cortados no mês</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-label">
+            <span>Entradas do Mês (Faturamento Bruto)</span>
+            <i class="fa-solid fa-sack-dollar" style="color: var(--success);"></i>
+          </div>
+          <div class="metric-value" id="cardMonthlyIncomes">R$ 0,00</div>
+          <div class="metric-sub">Receita bruta acumulada</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-label">
+            <span>Saídas do Mês (Despesas Totais)</span>
+            <i class="fa-solid fa-receipt" style="color: var(--danger);"></i>
+          </div>
+          <div class="metric-value" id="cardMonthlyExpenses" style="color: var(--danger);">R$ 0,00</div>
+          <div class="metric-sub">Custos fixos e variáveis do mês</div>
+        </div>
+
+        <div class="metric-card highlight">
+          <div class="metric-label">
+            <span style="color: var(--primary-gold); font-weight: 800;">LUCRO LÍQUIDO DO MÊS</span>
+            <i class="fa-solid fa-trophy" style="color: var(--primary-gold);"></i>
+          </div>
+          <div class="metric-value profit" id="cardMonthlyNetProfit">R$ 0,00</div>
+          <div class="metric-sub" style="color: var(--success); font-weight: 700;">
+            Lucro real livre de despesas
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. LISTA DE ATENDIMENTOS DO DIA -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin: 2rem 0 1rem; flex-wrap: wrap; gap: 0.75rem;">
+        <div>
+          <h3 style="font-size: 1.3rem; font-weight: 800;">
+            <i class="fa-solid fa-scissors" style="color: var(--primary-gold);"></i> Agenda & Atendimentos do Dia
+          </h3>
+          <p style="color: var(--text-muted); font-size: 0.85rem;">Lista de clientes agendados. Dê baixa e registre pagamentos em 1 clique.</p>
+        </div>
+        <button class="btn btn-gold btn-sm" onclick="openNewAppointmentModal()">
+          <i class="fa-solid fa-plus"></i> Novo Encaixe / Agendamento
+        </button>
+      </div>
+
+      <!-- TABELA DESKTOP -->
+      <div class="table-wrap admin-desktop-only">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Horário</th>
+              <th>Cliente</th>
+              <th>WhatsApp</th>
+              <th>Barbeiro</th>
+              <th>Serviço</th>
+              <th>Valor</th>
+              <th>Pagamento</th>
+              <th>Atendimento</th>
+              <th style="text-align: right;">Ações Rápidas</th>
+            </tr>
+          </thead>
+          <tbody id="appointmentsTableBody">
+            <tr>
+              <td colspan="9" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                <i class="fa-solid fa-circle-notch fa-spin"></i> Carregando atendimentos...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- LISTA DE CARDS MOBILE (100% ENQUADRADO NA TELA SEM ARRASTAR PRO LADO) -->
+      <div class="admin-mobile-only" id="appointmentsMobileList">
+        <div style="text-align: center; color: var(--text-muted); padding: 2rem;">
+          <i class="fa-solid fa-circle-notch fa-spin"></i> Carregando atendimentos...
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- ABA 2: GESTÃO DE BARBEIROS (EQUIPE) -->
+    <!-- ======================================================== -->
+    <div id="tab-barbers" class="tab-content">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h3 style="font-size: 1.4rem; font-weight: 800;">
+            <i class="fa-solid fa-users" style="color: var(--primary-gold);"></i> Barbeiros Cadastrados
+          </h3>
+          <p style="color: var(--text-muted); font-size: 0.85rem;">Adicione novos barbeiros para atender no mesmo site e gerencie suas jornadas.</p>
+        </div>
+        <button class="btn btn-gold" onclick="openNewBarberModal()">
+          <i class="fa-solid fa-user-plus"></i> Adicionar Novo Barbeiro
+        </button>
+      </div>
+
+      <div class="team-grid" id="adminBarbersGrid">
+        <!-- Injetado dinamicamente via admin.js -->
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- ABA 3: FLUXO DE CAIXA (ENTRADAS & SAÍDAS) -->
+    <!-- ======================================================== -->
+    <div id="tab-finance" class="tab-content">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h3 style="font-size: 1.4rem; font-weight: 800;">
+            <i class="fa-solid fa-cash-register" style="color: var(--primary-gold);"></i> Livro Caixa & Despesas
+          </h3>
+          <p style="color: var(--text-muted); font-size: 0.85rem;">Lance saídas (lâminas, produtos, contas) e receitas avulsas para apurar o lucro exato.</p>
+        </div>
+        <button class="btn btn-gold" onclick="openNewTransactionModal()">
+          <i class="fa-solid fa-plus-circle"></i> Lançar Entrada / Saída
+        </button>
+      </div>
+
+      <!-- TABELA DESKTOP -->
+      <div class="table-wrap admin-desktop-only">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Tipo</th>
+              <th>Categoria</th>
+              <th>Descrição</th>
+              <th>Valor (R$)</th>
+              <th style="text-align: right;">Ação</th>
+            </tr>
+          </thead>
+          <tbody id="financialTableBody">
+            <!-- Injetado via admin.js -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- LISTA DE CARDS MOBILE (100% ENQUADRADO NA TELA SEM ARRASTAR PRO LADO) -->
+      <div class="admin-mobile-only" id="financialMobileList">
+        <!-- Injetado via admin.js -->
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- ABA 4: CONFIGURAÇÕES & MERCADO PAGO -->
+    <!-- ======================================================== -->
+    <div id="tab-settings" class="tab-content">
+      <div style="max-width: 680px; margin: 0 auto; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 2rem;">
+        <h3 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--primary-gold);">
+          <i class="fa-solid fa-handshake"></i> Integração Mercado Pago
+        </h3>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">
+          Configure o link de pagamento online para que os clientes possam pagar via PIX ou cartão antecipadamente.
+        </p>
+
+        <form onsubmit="handleSaveSettings(event)">
+          
+          <div class="form-group">
+            <label class="form-label">Access Token de Produção (Mercado Pago):</label>
+            <input type="password" class="form-control" id="cfgMpAccessToken" placeholder="Ex: APP_USR-xxxxxxxxxxxxxxxx">
+            <small style="color: var(--text-dim); font-size: 0.75rem;">
+              Obtido no painel de desenvolvedor do Mercado Pago (Suas Aplicações &gt; Credenciais de Produção).
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Modo Sandbox (Testes):</label>
+            <select class="form-control" id="cfgMpSandbox">
+              <option value="sim">Sim (Modo de Demonstração / Testes ativado)</option>
+              <option value="nao">Não (Modo Produção - Dinheiro Real na Conta)</option>
+            </select>
+          </div>
+
+          <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 1.5rem 0;">
+
+          <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-main);">
+            <i class="fa-solid fa-shield"></i> Segurança & Contato
+          </h4>
+
+          <div class="form-group">
+            <label class="form-label">PIN de Acesso ao Painel Admin (4 dígitos):</label>
+            <input type="password" class="form-control" id="cfgAdminPin" maxlength="4" placeholder="Ex: 1234">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">WhatsApp da Barbearia (com DDD):</label>
+            <input type="text" class="form-control" id="cfgWhatsapp" placeholder="Ex: 5511999999999">
+          </div>
+
+          <button type="submit" class="btn btn-gold" style="width: 100%; padding: 0.85rem; margin-top: 1rem;">
+            <i class="fa-solid fa-floppy-disk"></i> Salvar Configurações
+          </button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MODAL: ADICIONAR NOVO BARBEIRO -->
+  <div class="modal-overlay" id="barberModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-user-plus" style="color: var(--primary-gold);"></i> Novo Barbeiro na Equipe</h3>
+        <button class="modal-close" onclick="closeBarberModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form onsubmit="handleNewBarberSubmit(event)">
+          <div class="form-group">
+            <label class="form-label">Nome Completo do Barbeiro:</label>
+            <input type="text" class="form-control" id="newBarberName" placeholder="Ex: Marcos Silva" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Telefone / WhatsApp:</label>
+            <input type="tel" class="form-control" id="newBarberPhone" placeholder="Ex: (11) 98888-7777">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Especialidades / Apresentação:</label>
+            <textarea class="form-control" id="newBarberBio" rows="2" placeholder="Ex: Especialista em barboterapia, cortes infantis e fade."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">URL da Foto de Perfil (Opcional):</label>
+            <input type="url" class="form-control" id="newBarberPhoto" placeholder="Deixe em branco para usar foto padrão">
+          </div>
+          <button type="submit" class="btn btn-gold" style="width: 100%; padding: 0.85rem;">
+            <i class="fa-solid fa-check"></i> Cadastrar Barbeiro
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: LANÇAR TRANSAÇÃO FINANCEIRA (ENTRADA OU SAÍDA) -->
+  <div class="modal-overlay" id="transactionModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-file-invoice-dollar" style="color: var(--primary-gold);"></i> Lançar Transação de Caixa</h3>
+        <button class="modal-close" onclick="closeTransactionModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form onsubmit="handleNewTransactionSubmit(event)">
+          <div class="form-group">
+            <label class="form-label">Tipo de Movimentação:</label>
+            <select class="form-control" id="txType" required>
+              <option value="saida">🔴 Saída (Despesa / Custo)</option>
+              <option value="entrada">🟢 Entrada (Receita Avulsa / Produto / Venda)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Valor (R$):</label>
+            <input type="number" step="0.01" min="0.01" class="form-control" id="txAmount" placeholder="Ex: 50.00" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Data da Movimentação:</label>
+            <input type="date" class="form-control" id="txDate" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Categoria:</label>
+            <select class="form-control" id="txCategory">
+              <option value="Lâminas & Descartáveis">Lâminas & Descartáveis</option>
+              <option value="Pomadas & Produtos">Pomadas & Produtos</option>
+              <option value="Energia & Água">Energia & Água</option>
+              <option value="Aluguel & Manutenção">Aluguel & Manutenção</option>
+              <option value="Comissão de Barbeiro">Comissão de Barbeiro</option>
+              <option value="Venda de Produto">Venda de Produto (Pomada/Óleo)</option>
+              <option value="Outros">Outros</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Descrição / Observação:</label>
+            <input type="text" class="form-control" id="txDescription" placeholder="Ex: Compra de 2 caixas de lâmina navalha">
+          </div>
+          <button type="submit" class="btn btn-gold" style="width: 100%; padding: 0.85rem;">
+            <i class="fa-solid fa-floppy-disk"></i> Salvar no Caixa
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/admin.js"></script>
+</body>
+</html>

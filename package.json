@@ -1,0 +1,17 @@
+{
+  "name": "rcbarber-sistema",
+  "version": "1.0.0",
+  "description": "Sistema completo para RC Barbearia com agendamento online, Mercado Pago e Dashboard de Gestão",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mercadopago": "^2.0.8",
+    "sqlite3": "^5.1.7"
+  }
+}
