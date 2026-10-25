@@ -5,47 +5,64 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Agendamento Confirmado | RC Barbearia</title>
   <link rel="icon" type="image/jpeg" href="/assets/images/logo.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="/css/style.css">
   <style>
     .confirm-box {
       max-width: 520px;
-      margin: 4rem auto;
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
+      margin: 3.5rem auto;
+      background: linear-gradient(180deg, #15181e 0%, #0d0f12 100%);
+      border: 1px solid rgba(245, 185, 75, 0.28);
       border-radius: var(--radius-lg);
-      padding: 2.5rem 2rem;
+      padding: 2.75rem 2rem;
       text-align: center;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.8), 0 0 35px rgba(245, 185, 75, 0.12);
+      animation: modalScaleIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .check-icon {
-      width: 76px;
-      height: 76px;
-      background: rgba(16, 185, 129, 0.15);
+      width: 82px;
+      height: 82px;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.08) 100%);
       border: 2px solid var(--success);
       color: var(--success);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2.5rem;
+      font-size: 2.6rem;
       margin: 0 auto 1.5rem;
+      box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
+      animation: checkPulse 2s infinite ease-in-out;
+    }
+    @keyframes checkPulse {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 25px rgba(16, 185, 129, 0.25);
+      }
+      50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 35px rgba(16, 185, 129, 0.45);
+      }
     }
     .ticket-details {
-      background: var(--bg-input);
-      border: 1px dashed var(--border-color);
+      background: rgba(18, 21, 26, 0.7);
+      border: 1px dashed rgba(245, 185, 75, 0.35);
       border-radius: var(--radius-sm);
-      padding: 1.25rem;
+      padding: 1.35rem 1.5rem;
       text-align: left;
-      margin: 1.5rem 0;
+      margin: 1.75rem 0;
       font-size: 0.95rem;
+      backdrop-filter: blur(10px);
     }
     .ticket-row {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 0.6rem;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      padding-bottom: 0.4rem;
+      margin-bottom: 0.7rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 0.5rem;
     }
     .ticket-row:last-child {
       border-bottom: none;
@@ -54,6 +71,7 @@
     }
     .ticket-label {
       color: var(--text-muted);
+      font-size: 0.88rem;
     }
     .ticket-val {
       font-weight: 700;

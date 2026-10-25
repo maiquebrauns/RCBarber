@@ -49,7 +49,7 @@ function highlightToday() {
   if (row) {
     row.classList.add('today');
     const firstTd = row.querySelector('td');
-    if (firstTd) firstTd.innerHTML += ' <span class="badge badge-success" style="margin-left:6px">Hoje</span>';
+    if (firstTd) firstTd.innerHTML += ' <span class="badge-today"><span class="radar-dot"></span> Hoje</span>';
   }
 }
 

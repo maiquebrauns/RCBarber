@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Dashboard de Gestão & Financeiro | RC Barbearia</title>
   <link rel="icon" type="image/jpeg" href="/assets/images/logo.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="/css/style.css">
   <!-- Chart.js para gráficos visuais -->
@@ -21,14 +24,15 @@
       padding: 1.5rem;
     }
     .login-box {
-      max-width: 380px;
+      max-width: 400px;
       width: 100%;
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-md);
+      background: linear-gradient(180deg, #15181e 0%, #0d0f12 100%);
+      border: 1px solid rgba(245, 185, 75, 0.25);
+      border-radius: var(--radius-lg);
       padding: 2.5rem 2rem;
       text-align: center;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.8), 0 0 35px rgba(245, 185, 75, 0.12);
+      animation: modalScaleIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .pin-input {
       letter-spacing: 8px;
@@ -43,15 +47,19 @@
       display: block;
     }
     .quick-action-btn {
-      padding: 0.3rem 0.6rem;
-      border-radius: 6px;
+      padding: 0.35rem 0.7rem;
+      border-radius: 8px;
       font-size: 0.78rem;
       font-weight: 700;
       border: 1px solid transparent;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 0.3rem;
+      gap: 0.35rem;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .quick-action-btn:hover {
+      transform: translateY(-1px);
     }
     .btn-action-done {
       background: rgba(16, 185, 129, 0.15);
